@@ -78,13 +78,13 @@ class Zoo(object):
                 return self.__animal[name]
 
     def add_animal(self, animal: Animal):
-        animalClass = type(animal).__name__
-        animalName = animal.name
-        if animalClass in self.__animal:
-            self.__animal[animalClass][animalName] = animal
+        animalclass = type(animal).__name__
+        animalname = animal.name
+        if animalclass in self.__animal:
+            self.__animal[animalclass][animalname] = animal
         else:
-            self.__animal[animalClass] = {}
-            self.__animal[animalClass][animalName] = animal
+            self.__animal[animalclass] = {}
+            self.__animal[animalclass][animalname] = animal
 
 
 if __name__ == '__main__':
