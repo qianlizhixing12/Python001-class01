@@ -1,0 +1,178 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>手机评分</title>
+    <link rel="stylesheet" href="../static/css/bootstrap.css">
+    <link rel="stylesheet" href="../static/css/Chart.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container-fluid">
+            <!-- <div class="navbar-header">
+                <a class="navbar-brand" href="#">手机评分</a>
+            </div> -->
+            <div id="navbar" class="navbar-collapse collapse">
+                <form class="navbar-form navbar-right">
+                    <div class="form-control" readonly>采集时间</div>
+                    <select id="updatedt" class="form-control" onchange="search()">
+                        <option value=""></option>
+                        {% for option in options %}
+                        <option value={{ option.updatedt }} {%ifequal option.updatedt updatedt%}selected{%endifequal%}>
+                            {{ option.updatedt }}</option>
+                        {% endfor %}
+                    </select>
+                    <div class="form-control" readonly>评论内容</div>
+                    <input id="content" type="search" class="form-control" placeholder="Search..." onsearch="search()"
+                        value={{content}}>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="table-responsive" style="top: 50px; position: relative;">
+        <div class="chardiv-left">
+            <canvas id="myChart1"></canvas>
+        </div>
+        <div class="chardiv-right">
+            <canvas id="myChart2"></canvas>
+        </div>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>手机型号</th>
+                    <th>短评内容</th>
+                    <th>正向系数</th>
+                    <th>评论时间</th>
+                    <th>采集时间</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for content in contents %}
+                <tr>
+                    <td>{{ content.product }}</td>
+                    <td>{{ content.content }}</td>
+                    <td>{{ content.sentiments }}</td>
+                    <td>{{ content.dt }}</td>
+                    <td>{{ content.updatedt }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+    <script src="../static/js/Chart.js"></script>
+    <script src="../static/js/bootstrap.js"></script>
+    <script type="text/javascript">
+        function search() {
+            var content = document.getElementById("content").value;
+            var options = document.getElementById('updatedt');
+            var index = options.selectedIndex; //序号，取当前选中选项的序号      
+            var updatedt = options.options[index].value;
+            console.log('nxx', content, updatedt)
+            window.location.href = window.location.origin + '?content=' + content + '&updatedt=' + updatedt;
+        }
+
+        var ctx1 = document.getElementById("myChart1").getContext('2d');
+        var sum1_lable = '{{sum1_lable}}'
+        sum1_lable = sum1_lable.split(',')
+        var myChart1 = new Chart(ctx1, {
+            type: 'bar',
+            data: {
+                labels: sum1_lable,
+                datasets: [{
+                    label: '评论热度(评论数)',
+                    data: {{sum1_data}},
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)',
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                    ],
+                    borderColor: [
+                        'rgba(255,99,132,1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)',
+                        'rgba(255,99,132,1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+
+        var ctx2 = document.getElementById("myChart2").getContext('2d');
+        // debugger;
+        var sum2_lable = '{{sum2_lable}}'
+        sum2_lable = sum2_lable.split(',')
+        var myChart2 = new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels: sum1_lable,
+                datasets: [{
+                    label: '评价得分(平均分)',
+                    data: {{sum2_data}},
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)',
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                    ],
+                    borderColor: [
+                        'rgba(255,99,132,1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)',
+                        'rgba(255,99,132,1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+    </script>
+
+</body>
+
+</html>
